@@ -17,10 +17,10 @@ Route::get('/', fn () => redirect()->route('recherche'));
 // ─── Authentification ─────────────────────────────────────────────────────────
 Route::middleware('guest')->group(function () {
     Route::get('/inscription', [InscriptionController::class, 'create'])->name('inscription');
-    Route::post('/inscription', [InscriptionController::class, 'store']);
+    Route::post('/inscription', [InscriptionController::class, 'store'])->middleware('throttle:10,1');
 
     Route::get('/connexion', [ConnexionController::class, 'create'])->name('connexion');
-    Route::post('/connexion', [ConnexionController::class, 'store']);
+    Route::post('/connexion', [ConnexionController::class, 'store'])->middleware('throttle:5,1');
 });
 
 Route::post('/deconnexion', [ConnexionController::class, 'destroy'])

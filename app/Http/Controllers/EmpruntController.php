@@ -8,6 +8,7 @@ use App\Models\Exemplaire;
 use App\Models\Statut;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class EmpruntController extends Controller
@@ -34,31 +35,38 @@ class EmpruntController extends Controller
     {
         $user = Auth::user();
 
-        // Contrainte : pas d'emprunt actif
         if ($user->empruntActif()) {
             return back()->withErrors(['emprunt' => 'Vous avez déjà un emprunt en cours. Retournez vos exemplaires avant d\'en emprunter de nouveaux.']);
         }
 
-        $statutEmprunte = Statut::where('statut', 'emprunté')->firstOrFail();
-        $exemplaires    = Exemplaire::whereIn('id', $request->exemplaires)
-            ->whereHas('statut', fn ($q) => $q->where('statut', 'disponible'))
-            ->get();
+        return DB::transaction(function () use ($request, $user) {
+            $statutEmprunte = Statut::where('statut', 'emprunté')->first();
 
-        if ($exemplaires->isEmpty()) {
-            return back()->withErrors(['emprunt' => 'Aucun exemplaire disponible sélectionné.']);
-        }
+            if (!$statutEmprunte) {
+                abort(500, 'Configuration des statuts manquante. Contactez un administrateur.');
+            }
 
-        $dateEmprunt = now();
-        $emprunt = Emprunt::create([
-            'user_id'            => $user->id,
-            'date_emprunt'       => $dateEmprunt,
-            'date_retour_prevue' => $dateEmprunt->copy()->addDays(30),
-        ]);
+            $exemplaires = Exemplaire::whereIn('id', $request->exemplaires)
+                ->whereHas('statut', fn ($q) => $q->where('statut', 'disponible'))
+                ->lockForUpdate()
+                ->get();
 
-        $emprunt->exemplaires()->attach($exemplaires->pluck('id')->toArray());
-        $exemplaires->each(fn ($e) => $e->update(['statut_id' => $statutEmprunte->id]));
+            if ($exemplaires->isEmpty()) {
+                return back()->withErrors(['emprunt' => 'Aucun exemplaire disponible sélectionné.']);
+            }
 
-        return redirect()->route('profil')->with('success', 'Emprunt enregistré. Date de retour prévue : ' . $emprunt->date_retour_prevue->format('d/m/Y'));
+            $dateEmprunt = now();
+            $emprunt = Emprunt::create([
+                'user_id'            => $user->id,
+                'date_emprunt'       => $dateEmprunt,
+                'date_retour_prevue' => $dateEmprunt->copy()->addDays(30),
+            ]);
+
+            $emprunt->exemplaires()->attach($exemplaires->pluck('id')->toArray());
+            $exemplaires->each(fn ($e) => $e->update(['statut_id' => $statutEmprunte->id]));
+
+            return redirect()->route('profil')->with('success', 'Emprunt enregistré. Date de retour prévue : ' . $emprunt->date_retour_prevue->format('d/m/Y'));
+        });
     }
 
     public function show(Emprunt $emprunt)
