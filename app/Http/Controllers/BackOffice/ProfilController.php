@@ -33,7 +33,11 @@ class ProfilController extends Controller
             return back()->withErrors(['retour' => 'Cet emprunt a déjà été validé.']);
         }
 
-        $statutDisponible = \App\Models\Statut::where('statut', 'disponible')->firstOrFail();
+        $statutDisponible = \App\Models\Statut::where('statut', 'disponible')->first();
+
+        if (!$statutDisponible) {
+            abort(500, 'Configuration des statuts manquante. Contactez un administrateur.');
+        }
 
         $emprunt->update(['date_retour_effective' => now()]);
         $emprunt->exemplaires()->update(['statut_id' => $statutDisponible->id]);
