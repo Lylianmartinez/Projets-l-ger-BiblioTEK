@@ -4,7 +4,7 @@ namespace Tests\Unit;
 
 use App\Models\Emprunt;
 use Carbon\Carbon;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class EmpruntUnitTest extends TestCase
 {
