@@ -1,164 +1,188 @@
-# Tic'n Go — Billetterie Desktop
+# 📚 BiblioTEK
 
-Application de billetterie en client lourd développée avec **JavaFX** et **Spring Boot**.  
-Elle permet à des administrateurs de gérer des spectacles, des lieux et des tickets, et à des clients d'acheter et consulter leurs billets.
+Application web de **gestion de bibliothèque** développée avec Laravel 12.
+Elle permet aux usagers de consulter le catalogue, d'emprunter et de rendre des
+ouvrages, et aux bibliothécaires de gérer les exemplaires, les comptes et la base
+de données depuis un back-office dédié.
 
----
-
-## Fonctionnalités
-
-### Espace Admin
-- Tableau de bord avec statistiques (spectacles, clients, tickets, lieux)
-- Gestion des spectacles (ajout, modification, suppression)
-- Gestion des lieux avec suivi des capacités
-- Gestion des clients
-- Gestion des tickets : validation, annulation, remboursement
-- Export PDF des tickets avec **QR code** intégré
-- Notifications email lors d'annulations *(optionnel)*
-
-### Espace Client
-- Parcourir et rechercher des spectacles disponibles
-- Réserver des tickets (choix de la séance, catégorie tarifaire, quantité)
-- Consulter ses réservations et afficher le QR code de chaque ticket
-- Gérer son profil (informations personnelles, mot de passe)
+🔗 **Démo en ligne :** <https://lylian.xcsoftworks.com/bibliotek/>
 
 ---
 
-## Stack technique
+## ✨ Fonctionnalités
+
+### Visiteurs
+- Recherche dans le catalogue par titre / auteur
+- Inscription et connexion (avec limitation de débit anti-bruteforce)
+
+### Usagers connectés
+- Consultation de leur profil et de l'historique d'emprunts
+- Emprunt d'un ou plusieurs exemplaires
+- Retour d'ouvrages
+
+### Bibliothécaires (back-office `/bo`)
+- Gestion des **exemplaires** (CRUD : ajout, modification, suppression)
+- Gestion des **usagers** et de leurs **comptes** (consultation, modification,
+  suspension, suppression)
+- Validation des retours
+- **Tableau de bord base de données** (`/bo/database`) façon phpLiteAdmin :
+  liste des tables, parcours paginé et console SQL (lecture + écriture) —
+  protégé par l'authentification, sans mot de passe statique exposé
+
+---
+
+## 🛠️ Stack technique
 
 | Couche | Technologie |
 |--------|-------------|
-| Langage | Java 21 |
-| Interface graphique | JavaFX 21 + FXML |
-| Framework applicatif | Spring Boot 3.5 |
-| Persistance | Spring Data JPA + Hibernate |
-| Base de données | MySQL 8+ |
-| Sécurité | Spring Security Crypto (BCrypt) |
-| Génération PDF | OpenPDF 1.3.30 |
-| QR Code | ZXing 3.5.2 |
-| Email | Spring Mail (SMTP Gmail) |
-| Build | Maven (wrapper inclus) |
-| Utilitaires | Lombok |
+| Backend | PHP 8.2+ · [Laravel 12](https://laravel.com) |
+| Base de données | SQLite (par défaut) — compatible MySQL/MariaDB/PostgreSQL |
+| Frontend | Blade · Tailwind CSS 4 · Vite 7 |
+| Tests | PHPUnit 11 |
+| Outillage | Laravel Pint (style), Pail (logs), Sail (Docker) |
 
 ---
 
-## Prérequis
+## 🗂️ Modèle de données
 
-- **JDK 21** — [Télécharger](https://adoptium.net/)
-- **MySQL 8+** — [Télécharger](https://dev.mysql.com/downloads/)
-- Maven n'est **pas** nécessaire à installer (le wrapper `mvnw` est inclus)
+Le schéma complet est documenté dans [`docs/database/`](docs/database/) sous
+plusieurs formats (PlantUML, Mermaid, DBML, DDL SQL). Vue d'ensemble :
+
+```
+Auteur ──< Livre >──< Categorie          (un livre a un auteur, plusieurs catégories)
+              │
+              └──< Exemplaire >── Statut  (copies physiques, chacune dans un état)
+                       │
+User ──< Emprunt >─────┘                  (un emprunt porte sur un ou plusieurs exemplaires)
+```
+
+| Entité | Rôle |
+|--------|------|
+| `users` | Comptes — rôle `usager` ou `bibliothecaire`, indicateur `is_active` |
+| `auteurs` | Auteurs des livres |
+| `categories` | Genres / classifications |
+| `livres` | Œuvres du catalogue (clé primaire **UUID**) |
+| `exemplaires` | Copies physiques d'un livre, chacune avec un statut |
+| `statuts` | États possibles (disponible, emprunté, abîmé…) |
+| `emprunts` | Opérations de prêt rattachées à un usager |
+
+> 📖 Diagrammes : [`schema.puml`](docs/database/schema.puml) ·
+> [`class-diagram.puml`](docs/database/class-diagram.puml) ·
+> [`schema.mermaid.md`](docs/database/schema.mermaid.md) ·
+> [`schema.dbml`](docs/database/schema.dbml) ·
+> [`schema.sql`](docs/database/schema.sql)
 
 ---
 
-## Installation & lancement
+## 🚀 Installation
 
-### 1. Cloner le dépôt
+### Prérequis
+- PHP **8.2+** avec les extensions habituelles de Laravel (`pdo_sqlite`, `mbstring`, …)
+- [Composer](https://getcomposer.org)
+- [Node.js](https://nodejs.org) **18+** et npm
+
+### Étapes
 
 ```bash
-git clone https://github.com/ton-utilisateur/ticngo.git
-cd ticngo
+# 1. Cloner le dépôt
+git clone <url-du-repo> bibliotek
+cd bibliotek
+
+# 2. Installer les dépendances
+composer install
+npm install
+
+# 3. Configurer l'environnement
+cp .env.example .env
+php artisan key:generate
+
+# 4. Créer la base SQLite
+touch database/database.sqlite
+# (vérifier dans .env : DB_CONNECTION=sqlite)
+
+# 5. Migrer et peupler la base
+php artisan migrate --seed
+
+# 6. Compiler les assets
+npm run build
 ```
 
-### 2. Configurer la base de données
-
-Démarrer MySQL puis vérifier le fichier `src/main/resources/application.properties` :
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/ticngo?createDatabaseIfNotExist=true
-spring.datasource.username=root
-spring.datasource.password=        # ← ton mot de passe MySQL ici
-```
-
-> La base de données `ticngo` est **créée automatiquement** au premier lancement.
-
-### 3. Lancer l'application
-
-```powershell
-# Windows
-.\mvnw.cmd javafx:run
-```
+### Lancer en développement
 
 ```bash
-# Linux / macOS
-./mvnw javafx:run
+# Serveur Laravel + queue + logs + Vite, en une commande
+composer dev
+
+# …ou simplement
+php artisan serve
 ```
 
-> La première exécution peut prendre quelques minutes (téléchargement des dépendances Maven).
+L'application est alors disponible sur <http://localhost:8000>.
 
 ---
 
-## Structure du projet
+## 👤 Comptes de démonstration
+
+Après `php artisan migrate --seed` :
+
+| Rôle | Email | Mot de passe |
+|------|-------|--------------|
+| **Bibliothécaire** | `bibliothecaire@bibliotek.fr` | `Bibliotek2026!` |
+| Usager | `lucas@example.fr` (et `emma@`, `hugo@`, `lea@`…) | `password` |
+| Usager suspendu | `suspendu@example.fr` | `password` |
+
+> ⚠️ Ces identifiants ne servent qu'en développement / démo. **Changez-les
+> avant toute mise en production.**
+
+---
+
+## 🧪 Tests
+
+```bash
+php artisan test
+```
+
+Suite de tests fonctionnels et unitaires couvrant l'authentification, la
+recherche, les emprunts, les retours et le back-office des exemplaires
+(`tests/Feature`, `tests/Unit`).
+
+---
+
+## 📁 Structure du projet
 
 ```
-src/main/java/com/ticngo/ticngo/
-├── Main.java                    # Point d'entrée JavaFX
-├── TicNGoApp.java               # Application JavaFX
-├── TicngoApplication.java       # Point d'entrée Spring Boot
-├── config/                      # Configuration (BCrypt, données initiales)
-├── entity/                      # Entités JPA (Show, Session, Ticket, Client…)
-├── dto/                         # Formulaires / objets de transfert
-├── repository/                  # Accès base de données (Spring Data)
-├── service/                     # Logique métier
-└── javafx/
-    ├── LoginController.java     # Authentification
-    ├── admin/                   # Interface administrateur
-    └── client/                  # Interface client
-
-src/main/resources/
-├── application.properties       # Configuration générale
-├── fxml/                        # Layouts JavaFX (login, admin, client)
-└── css/                         # Styles de l'interface
+app/
+├── Http/Controllers/
+│   ├── Auth/            # Inscription, connexion
+│   ├── BackOffice/      # Exemplaires, profils, base de données (bibliothécaire)
+│   ├── Admin/           # Gestion des comptes usagers
+│   ├── RechercheController.php
+│   ├── EmpruntController.php
+│   └── RetourController.php
+├── Http/Middleware/CheckRole.php   # Contrôle d'accès par rôle
+└── Models/             # Auteur, Categorie, Livre, Exemplaire, Statut, Emprunt, User
+database/
+├── migrations/         # Schéma de la base
+├── seeders/            # Données de démonstration
+└── factories/
+docs/database/          # Modélisation (PlantUML, Mermaid, DBML, SQL)
+resources/views/        # Templates Blade
+routes/web.php          # Routes de l'application
+tests/                  # Tests PHPUnit
 ```
 
 ---
 
-## Modèle de données
+## 🔐 Sécurité
 
-```
-Venue ──< Show ──< Session ──< Ticket >── Client
-                        └──< PricingCategory
-Show >── Tag
-```
-
-| Entité | Description |
-|--------|-------------|
-| `Show` | Spectacle (titre, affiche, durée, langue, description) |
-| `Session` | Séance d'un spectacle (date, heure, places disponibles) |
-| `Ticket` | Billet individuel avec numéro unique `TNG-XXXXXXXX` |
-| `Client` | Utilisateur final (email, mot de passe hashé) |
-| `Admin` | Administrateur (rôle ADMIN ou SUPER_ADMIN) |
-| `Venue` | Lieu de représentation (nom, adresse, capacité) |
-| `PricingCategory` | Catégorie tarifaire (plein tarif, réduit, etc.) |
-| `Tag` | Étiquettes de classification des spectacles |
+- Accès au back-office restreint via le middleware `role:bibliothecaire`.
+- Limitation de débit sur l'inscription et la connexion.
+- Le tableau de bord base de données est servi **par Laravel et protégé par
+  l'authentification** — il n'expose aucun outil tiers ni mot de passe statique
+  dans la racine web.
 
 ---
 
-## Configuration email *(optionnelle)*
+## 📄 Licence
 
-Pour activer les notifications email lors d'annulations de tickets :
-
-```properties
-ticngo.mail.enabled=true
-spring.mail.username=votre-email@gmail.com
-spring.mail.password=votre-mot-de-passe-application   # mot de passe d'app Gmail
-```
-
-> Désactivé par défaut (`ticngo.mail.enabled=false`).
-
----
-
-## Résolution des erreurs courantes
-
-| Erreur | Solution |
-|--------|----------|
-| `Communications link failure` | MySQL n'est pas démarré |
-| `Access denied for user 'root'` | Mauvais mot de passe dans `application.properties` |
-| `JAVA_HOME not set` | Installer JDK 21 et configurer la variable d'environnement |
-| La fenêtre JavaFX ne s'ouvre pas | Vérifier que le JDK 21 est bien installé |
-
----
-
-## Licence
-
-Ce projet est réalisé dans un cadre académique / personnel.
-
+Distribué sous licence [MIT](https://opensource.org/licenses/MIT).
