@@ -14,6 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
         ]);
+
+        // La route de login s'appelle « connexion » (pas « login ») : rediriger
+        // les visiteurs non authentifiés vers la bonne route plutôt que de
+        // déclencher RouteNotFoundException (HTTP 500).
+        $middleware->redirectGuestsTo(fn () => route('connexion'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {

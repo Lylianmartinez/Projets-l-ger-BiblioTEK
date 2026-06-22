@@ -1,0 +1,107 @@
+@startuml bibliotek_schema
+' Modélisation de la base de données — Bibliotek
+' Diagramme entité-association (notation Information Engineering)
+' Rendu : https://www.plantuml.com/plantuml  ou  extension PlantUML de VS Code
+
+!define table(x) entity x << (T,#5B9BD5) >>
+!define pk(x) <b><color:#B8860B>x</color></b>
+!define fk(x) <color:#2E75B6>x</color>
+
+hide circle
+skinparam linetype ortho
+skinparam shadowing false
+skinparam entity {
+  BackgroundColor #FFFFFF
+  BorderColor #5B9BD5
+}
+
+table(users) {
+  pk(id) : BIGINT
+  --
+  name : VARCHAR
+  email : VARCHAR <<unique>>
+  email_verified_at : TIMESTAMP <<null>>
+  password : VARCHAR
+  role : ENUM('usager','bibliothecaire')
+  is_active : BOOLEAN
+  remember_token : VARCHAR <<null>>
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+table(auteurs) {
+  pk(id) : BIGINT
+  --
+  nom : VARCHAR
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+table(categories) {
+  pk(id) : BIGINT
+  --
+  categorie : VARCHAR
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+table(statuts) {
+  pk(id) : BIGINT
+  --
+  statut : VARCHAR
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+table(livres) {
+  pk(id) : UUID
+  --
+  titre : VARCHAR
+  fk(auteur_id) : BIGINT
+  cover_url : VARCHAR <<null>>
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+table(livres_categories) {
+  pk(fk(livre_id)) : UUID
+  pk(fk(categorie_id)) : BIGINT
+}
+
+table(exemplaires) {
+  pk(id) : BIGINT
+  --
+  fk(livre_id) : UUID
+  fk(statut_id) : BIGINT
+  mise_en_service : DATE
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+table(emprunts) {
+  pk(id) : BIGINT
+  --
+  fk(user_id) : BIGINT
+  date_emprunt : DATE
+  date_retour_prevue : DATE
+  date_retour_effective : DATE <<null>>
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+table(emprunt_exemplaire) {
+  pk(fk(emprunt_id)) : BIGINT
+  pk(fk(exemplaire_id)) : BIGINT
+}
+
+' ---- Relations ----
+auteurs     ||--o{ livres             : écrit
+livres      ||--o{ livres_categories
+categories  ||--o{ livres_categories
+livres      ||--o{ exemplaires        : possède
+statuts     ||--o{ exemplaires        : qualifie
+users       ||--o{ emprunts           : effectue
+emprunts    ||--o{ emprunt_exemplaire
+exemplaires ||--o{ emprunt_exemplaire
+
+@enduml

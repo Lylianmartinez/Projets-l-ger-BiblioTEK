@@ -324,6 +324,7 @@
                     <a href="{{ route('bo.profils') }}"       class="nav-link {{ request()->routeIs('bo.profils*') ? 'active' : '' }}">Usagers</a>
                     <a href="{{ route('bo.usagers.index') }}" class="nav-link {{ request()->routeIs('bo.usagers*') ? 'active' : '' }}">Comptes</a>
                     <a href="{{ route('bo.exemplaires') }}"   class="nav-link {{ request()->routeIs('bo.exemplaires*') ? 'active' : '' }}">Exemplaires</a>
+                    <a href="{{ route('bo.database') }}"      class="nav-link {{ request()->routeIs('bo.database*') ? 'active' : '' }}">Base SQL</a>
                 @endif
 
                 <form action="{{ route('deconnexion') }}" method="POST" style="margin-left:.5rem">

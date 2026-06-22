@@ -1,0 +1,88 @@
+// Modèle de base de données — Bibliotek
+// Format DBML — coller dans https://dbdiagram.io  ou  utiliser dbdocs (https://dbdocs.io)
+// Génère un schéma visuel interactif + export SQL.
+
+Project bibliotek {
+  database_type: 'MySQL'
+  Note: 'Système de gestion de bibliothèque (Laravel)'
+}
+
+Table users {
+  id bigint [pk, increment]
+  name varchar
+  email varchar [unique, not null]
+  email_verified_at timestamp [null]
+  password varchar
+  role varchar [note: "ENUM('usager','bibliothecaire'), défaut usager"]
+  is_active boolean [default: true]
+  remember_token varchar [null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table auteurs {
+  id bigint [pk, increment]
+  nom varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table categories {
+  id bigint [pk, increment]
+  categorie varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table statuts {
+  id bigint [pk, increment]
+  statut varchar [note: 'ex : disponible, emprunté, abîmé']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table livres {
+  id uuid [pk]
+  titre varchar
+  auteur_id bigint [ref: > auteurs.id, not null]
+  cover_url varchar [null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table livres_categories {
+  livre_id uuid [ref: > livres.id]
+  categorie_id bigint [ref: > categories.id]
+
+  indexes {
+    (livre_id, categorie_id) [pk]
+  }
+}
+
+Table exemplaires {
+  id bigint [pk, increment]
+  livre_id uuid [ref: > livres.id, not null]
+  statut_id bigint [ref: > statuts.id, not null]
+  mise_en_service date
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table emprunts {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id, not null]
+  date_emprunt date
+  date_retour_prevue date
+  date_retour_effective date [null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table emprunt_exemplaire {
+  emprunt_id bigint [ref: > emprunts.id]
+  exemplaire_id bigint [ref: > exemplaires.id]
+
+  indexes {
+    (emprunt_id, exemplaire_id) [pk]
+  }
+}

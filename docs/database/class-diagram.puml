@@ -1,0 +1,85 @@
+@startuml bibliotek_class_diagram
+' Diagramme de classes — modèles Eloquent et leurs relations
+' Reflète app/Models/*.php
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+hide empty members
+
+class User {
+  +id : int
+  +name : string
+  +email : string
+  +role : string
+  +is_active : bool
+  --
+  +emprunts() : HasMany
+}
+
+class Auteur {
+  +id : int
+  +nom : string
+  --
+  +livres() : HasMany
+}
+
+class Categorie {
+  +id : int
+  +categorie : string
+  --
+  +livres() : BelongsToMany
+}
+
+class Statut {
+  +id : int
+  +statut : string
+  --
+  +exemplaires() : HasMany
+}
+
+class Livre {
+  +id : uuid
+  +titre : string
+  +auteur_id : int
+  +cover_url : ?string
+  --
+  +auteur() : BelongsTo
+  +categories() : BelongsToMany
+  +exemplaires() : HasMany
+}
+
+class Exemplaire {
+  +id : int
+  +livre_id : uuid
+  +statut_id : int
+  +mise_en_service : date
+  --
+  +livre() : BelongsTo
+  +statut() : BelongsTo
+  +emprunts() : BelongsToMany
+}
+
+class Emprunt {
+  +id : int
+  +user_id : int
+  +date_emprunt : date
+  +date_retour_prevue : date
+  +date_retour_effective : ?date
+  --
+  +user() : BelongsTo
+  +exemplaires() : BelongsToMany
+}
+
+Auteur "1" --> "*" Livre : écrit
+Livre "*" -- "*" Categorie : classé dans
+Livre "1" --> "*" Exemplaire : possède
+Statut "1" --> "*" Exemplaire : état
+User "1" --> "*" Emprunt : effectue
+Emprunt "*" -- "*" Exemplaire : porte sur
+
+note bottom of Livre
+  Clé primaire UUID
+end note
+
+@enduml
