@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\UsagerController;
 use App\Http\Controllers\Auth\ConnexionController;
 use App\Http\Controllers\Auth\InscriptionController;
+use App\Http\Controllers\BackOffice\DatabaseController as BODatabaseController;
 use App\Http\Controllers\BackOffice\ExemplaireController as BOExemplaireController;
 use App\Http\Controllers\BackOffice\ProfilController as BOProfilController;
 use App\Http\Controllers\EmpruntController;
@@ -56,6 +57,9 @@ Route::middleware(['auth', 'role:bibliothecaire'])->prefix('bo')->name('bo.')->g
     Route::get('/exemplaire/modification/{exemplaire}', [BOExemplaireController::class, 'edit'])->name('exemplaire.edit');
     Route::put('/exemplaire/modification/{exemplaire}', [BOExemplaireController::class, 'update'])->name('exemplaire.update');
     Route::delete('/exemplaire/suppression/{exemplaire}', [BOExemplaireController::class, 'destroy'])->name('exemplaire.destroy');
+
+    Route::get('/database',       [BODatabaseController::class, 'index'])->name('database');
+    Route::post('/database/query', [BODatabaseController::class, 'query'])->name('database.query');
 
     Route::get('/usagers',                         [UsagerController::class, 'index'])->name('usagers.index');
     Route::get('/usager/{usager}',                 [UsagerController::class, 'show'])->name('usagers.show');

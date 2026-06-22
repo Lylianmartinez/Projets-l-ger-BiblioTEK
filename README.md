@@ -1,5 +1,16 @@
 # 📚 BiblioTEK
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Lylianmartinez_Projets-l-ger-BiblioTEK&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Lylianmartinez_Projets-l-ger-BiblioTEK)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Lylianmartinez_Projets-l-ger-BiblioTEK&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Lylianmartinez_Projets-l-ger-BiblioTEK)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Lylianmartinez_Projets-l-ger-BiblioTEK&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=Lylianmartinez_Projets-l-ger-BiblioTEK)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Lylianmartinez_Projets-l-ger-BiblioTEK&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Lylianmartinez_Projets-l-ger-BiblioTEK)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Lylianmartinez_Projets-l-ger-BiblioTEK&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=Lylianmartinez_Projets-l-ger-BiblioTEK)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Lylianmartinez_Projets-l-ger-BiblioTEK&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Lylianmartinez_Projets-l-ger-BiblioTEK)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Lylianmartinez_Projets-l-ger-BiblioTEK&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Lylianmartinez_Projets-l-ger-BiblioTEK)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=Lylianmartinez_Projets-l-ger-BiblioTEK&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=Lylianmartinez_Projets-l-ger-BiblioTEK)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Lylianmartinez_Projets-l-ger-BiblioTEK&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Lylianmartinez_Projets-l-ger-BiblioTEK)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Lylianmartinez_Projets-l-ger-BiblioTEK&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Lylianmartinez_Projets-l-ger-BiblioTEK)
+
 Application web de **gestion de bibliothèque** développée avec Laravel 12.
 Elle permet aux usagers de consulter le catalogue, d'emprunter et de rendre des
 ouvrages, et aux bibliothécaires de gérer les exemplaires, les comptes et la base
