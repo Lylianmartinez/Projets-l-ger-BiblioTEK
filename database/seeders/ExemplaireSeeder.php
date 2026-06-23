@@ -15,7 +15,7 @@ class ExemplaireSeeder extends Seeder
         $statuts = Statut::all()->keyBy('statut');
 
         $livres->each(function ($livre) use ($statuts) {
-            $nbExemplaires = rand(2, 6);
+            $nbExemplaires = random_int(2, 6);
             for ($i = 0; $i < $nbExemplaires; $i++) {
                 $statut = $statuts->random();
                 Exemplaire::create([
