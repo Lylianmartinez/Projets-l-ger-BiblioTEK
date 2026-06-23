@@ -57,7 +57,8 @@
             @foreach($exemplairesDisponibles as $exemplaire)
                 <tr>
                     <td>
-                        <input type="checkbox" name="exemplaires[]" value="{{ $exemplaire->id }}" style="width:auto">
+                        <input type="checkbox" id="exemplaire-{{ $exemplaire->id }}" name="exemplaires[]" value="{{ $exemplaire->id }}" style="width:auto">
+                        <label for="exemplaire-{{ $exemplaire->id }}" class="sr-only">Sélectionner {{ $exemplaire->livre->titre }}</label>
                     </td>
                     <td>{{ $exemplaire->livre->titre }}</td>
                     <td>{{ $exemplaire->livre->auteur->nom }}</td>
