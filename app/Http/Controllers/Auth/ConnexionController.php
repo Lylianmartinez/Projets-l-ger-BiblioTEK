@@ -20,9 +20,7 @@ class ConnexionController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (!Auth::attempt($credentials, $request->boolean('remember'))) {
-            return back()->withErrors([
-                'email' => 'Ces identifiants ne correspondent à aucun compte.',
-            ])->onlyInput('email');
+            return $this->echecConnexion('Ces identifiants ne correspondent à aucun compte.');
         }
 
         $request->session()->regenerate();
@@ -35,16 +33,19 @@ class ConnexionController extends Controller
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return back()->withErrors([
-                'email' => 'Votre compte a été suspendu. Contactez la bibliothèque.',
-            ])->onlyInput('email');
+            return $this->echecConnexion('Votre compte a été suspendu. Contactez la bibliothèque.');
         }
 
-        if ($user->estBibliothecaire()) {
-            return redirect()->route('bo.profils');
-        }
+        return $user->estBibliothecaire()
+            ? redirect()->route('bo.profils')
+            : redirect()->intended(route('profil'));
+    }
 
-        return redirect()->intended(route('profil'));
+    private function echecConnexion(string $message)
+    {
+        return back()->withErrors([
+            'email' => $message,
+        ])->onlyInput('email');
     }
 
     public function destroy(Request $request)
