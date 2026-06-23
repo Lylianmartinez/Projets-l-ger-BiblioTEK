@@ -10,7 +10,7 @@ class LivreFactory extends Factory
     public function definition(): array
     {
         return [
-            'titre'     => $this->faker->sentence(rand(2, 6), false),
+            'titre'     => $this->faker->sentence(random_int(2, 6), false),
             'auteur_id' => Auteur::inRandomOrder()->first()?->id ?? Auteur::factory(),
         ];
     }
