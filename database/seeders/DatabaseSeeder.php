@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
+    private const EMILE_ZOLA = 'Émile Zola';
+
     public function run(): void
     {
         $now = now();
@@ -32,7 +34,7 @@ class DatabaseSeeder extends Seeder
 
         foreach ([
             'Victor Hugo','Albert Camus','Simone de Beauvoir','Marcel Proust',
-            'Émile Zola','Gustave Flaubert','Stendhal','Honoré de Balzac',
+            self::EMILE_ZOLA,'Gustave Flaubert','Stendhal','Honoré de Balzac',
             'Jules Verne','Georges Simenon','Agatha Christie','Franz Kafka',
             'Fyodor Dostoïevski','Leo Tolstoï','Gabriel García Márquez',
             'George Orwell','Ernest Hemingway','Virginia Woolf',
@@ -49,8 +51,8 @@ class DatabaseSeeder extends Seeder
             ['Le Mythe de Sisyphe',              'Albert Camus',           'Philosophie',    'https://covers.openlibrary.org/b/id/1014395-L.jpg'],
             ['Le Deuxième Sexe',                 'Simone de Beauvoir',     'Philosophie',    'https://covers.openlibrary.org/b/id/78169-L.jpg'],
             ['Du côté de chez Swann',            'Marcel Proust',          'Roman',          'https://covers.openlibrary.org/b/id/8231995-L.jpg'],
-            ['Germinal',                         'Émile Zola',             'Roman',          'https://covers.openlibrary.org/b/id/8231980-L.jpg'],
-            ['Nana',                             'Émile Zola',             'Roman',          'https://covers.openlibrary.org/b/id/8237804-L.jpg'],
+            ['Germinal',                         self::EMILE_ZOLA,             'Roman',          'https://covers.openlibrary.org/b/id/8231980-L.jpg'],
+            ['Nana',                             self::EMILE_ZOLA,             'Roman',          'https://covers.openlibrary.org/b/id/8237804-L.jpg'],
             ['Madame Bovary',                    'Gustave Flaubert',       'Roman',          'https://covers.openlibrary.org/b/id/8231975-L.jpg'],
             ['Le Rouge et le Noir',              'Stendhal',               'Roman',          'https://covers.openlibrary.org/b/id/8231413-L.jpg'],
             ['Le Père Goriot',                   'Honoré de Balzac',       'Roman',          'https://covers.openlibrary.org/b/id/8231970-L.jpg'],
