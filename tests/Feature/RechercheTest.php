@@ -43,8 +43,8 @@ class RechercheTest extends TestCase
     {
         $auteur1 = Auteur::factory()->create(['nom' => 'Tolkien']);
         $auteur2 = Auteur::factory()->create(['nom' => 'Rowling']);
-        $livre1  = Livre::factory()->create(['titre' => 'Livre Tolkien', 'auteur_id' => $auteur1->id]);
-        $livre2  = Livre::factory()->create(['titre' => 'Livre Rowling', 'auteur_id' => $auteur2->id]);
+        Livre::factory()->create(['titre' => 'Livre Tolkien', 'auteur_id' => $auteur1->id]);
+        Livre::factory()->create(['titre' => 'Livre Rowling', 'auteur_id' => $auteur2->id]);
 
         $response = $this->get("/recherche?auteur_id={$auteur1->id}");
 
