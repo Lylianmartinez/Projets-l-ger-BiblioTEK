@@ -29,8 +29,8 @@ class RechercheTest extends TestCase
     public function test_recherche_par_titre(): void
     {
         $auteur  = Auteur::factory()->create();
-        $livre1  = Livre::factory()->create(['titre' => 'Le Seigneur des Anneaux', 'auteur_id' => $auteur->id]);
-        $livre2  = Livre::factory()->create(['titre' => 'Harry Potter', 'auteur_id' => $auteur->id]);
+        Livre::factory()->create(['titre' => 'Le Seigneur des Anneaux', 'auteur_id' => $auteur->id]);
+        Livre::factory()->create(['titre' => 'Harry Potter', 'auteur_id' => $auteur->id]);
 
         $response = $this->get('/recherche?titre=Seigneur');
 
