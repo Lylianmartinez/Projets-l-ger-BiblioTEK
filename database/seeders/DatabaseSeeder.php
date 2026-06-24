@@ -10,6 +10,18 @@ use Illuminate\Support\Str;
 class DatabaseSeeder extends Seeder
 {
     private const EMILE_ZOLA = 'Émile Zola';
+    private const VICTOR_HUGO = 'Victor Hugo';
+    private const ALBERT_CAMUS = 'Albert Camus';
+    private const JULES_VERNE = 'Jules Verne';
+    private const GEORGES_SIMENON = 'Georges Simenon';
+    private const AGATHA_CHRISTIE = 'Agatha Christie';
+    private const FRANZ_KAFKA = 'Franz Kafka';
+    private const FYODOR_DOSTOIEVSKI = 'Fyodor Dostoïevski';
+    private const LEO_TOLSTOI = 'Leo Tolstoï';
+    private const GEORGE_ORWELL = 'George Orwell';
+    private const LES_MISERABLES = 'Les Misérables';
+    private const LA_PESTE = 'La Peste';
+    private const CRIME_ET_CHATIMENT = 'Crime et Châtiment';
 
     public function run(): void
     {
@@ -33,22 +45,22 @@ class DatabaseSeeder extends Seeder
         $catIds = DB::table('categories')->pluck('id', 'categorie');
 
         foreach ([
-            'Victor Hugo','Albert Camus','Simone de Beauvoir','Marcel Proust',
+            self::VICTOR_HUGO,self::ALBERT_CAMUS,'Simone de Beauvoir','Marcel Proust',
             self::EMILE_ZOLA,'Gustave Flaubert','Stendhal','Honoré de Balzac',
-            'Jules Verne','Georges Simenon','Agatha Christie','Franz Kafka',
-            'Fyodor Dostoïevski','Leo Tolstoï','Gabriel García Márquez',
-            'George Orwell','Ernest Hemingway','Virginia Woolf',
+            self::JULES_VERNE,self::GEORGES_SIMENON,self::AGATHA_CHRISTIE,self::FRANZ_KAFKA,
+            self::FYODOR_DOSTOIEVSKI,self::LEO_TOLSTOI,'Gabriel García Márquez',
+            self::GEORGE_ORWELL,'Ernest Hemingway','Virginia Woolf',
         ] as $nom) {
             DB::table('auteurs')->insert(['nom' => $nom, 'created_at' => $now, 'updated_at' => $now]);
         }
         $auteurIds = DB::table('auteurs')->pluck('id', 'nom');
 
         $livres = [
-            ['Les Misérables',                   'Victor Hugo',            'Roman',          'https://covers.openlibrary.org/b/id/8739161-L.jpg'],
-            ['Notre-Dame de Paris',              'Victor Hugo',            'Roman',          'https://covers.openlibrary.org/b/id/8231856-L.jpg'],
-            ["L'Étranger",                       'Albert Camus',           'Roman',          'https://covers.openlibrary.org/b/id/8231990-L.jpg'],
-            ['La Peste',                         'Albert Camus',           'Roman',          'https://covers.openlibrary.org/b/id/8725942-L.jpg'],
-            ['Le Mythe de Sisyphe',              'Albert Camus',           'Philosophie',    'https://covers.openlibrary.org/b/id/1014395-L.jpg'],
+            [self::LES_MISERABLES,                   self::VICTOR_HUGO,            'Roman',          'https://covers.openlibrary.org/b/id/8739161-L.jpg'],
+            ['Notre-Dame de Paris',              self::VICTOR_HUGO,            'Roman',          'https://covers.openlibrary.org/b/id/8231856-L.jpg'],
+            ["L'Étranger",                       self::ALBERT_CAMUS,           'Roman',          'https://covers.openlibrary.org/b/id/8231990-L.jpg'],
+            [self::LA_PESTE,                         self::ALBERT_CAMUS,           'Roman',          'https://covers.openlibrary.org/b/id/8725942-L.jpg'],
+            ['Le Mythe de Sisyphe',              self::ALBERT_CAMUS,           'Philosophie',    'https://covers.openlibrary.org/b/id/1014395-L.jpg'],
             ['Le Deuxième Sexe',                 'Simone de Beauvoir',     'Philosophie',    'https://covers.openlibrary.org/b/id/78169-L.jpg'],
             ['Du côté de chez Swann',            'Marcel Proust',          'Roman',          'https://covers.openlibrary.org/b/id/8231995-L.jpg'],
             ['Germinal',                         self::EMILE_ZOLA,             'Roman',          'https://covers.openlibrary.org/b/id/8231980-L.jpg'],
@@ -56,22 +68,22 @@ class DatabaseSeeder extends Seeder
             ['Madame Bovary',                    'Gustave Flaubert',       'Roman',          'https://covers.openlibrary.org/b/id/8231975-L.jpg'],
             ['Le Rouge et le Noir',              'Stendhal',               'Roman',          'https://covers.openlibrary.org/b/id/8231413-L.jpg'],
             ['Le Père Goriot',                   'Honoré de Balzac',       'Roman',          'https://covers.openlibrary.org/b/id/8231970-L.jpg'],
-            ['Vingt mille lieues sous les mers', 'Jules Verne',            'Science-fiction','https://covers.openlibrary.org/b/id/8231965-L.jpg'],
-            ['Le Tour du monde en 80 jours',     'Jules Verne',            'Roman',          'https://covers.openlibrary.org/b/id/6976035-L.jpg'],
-            ['Voyage au centre de la Terre',     'Jules Verne',            'Science-fiction','https://covers.openlibrary.org/b/id/5890987-L.jpg'],
-            ['Le Chien jaune',                   'Georges Simenon',        'Policier',       'https://covers.openlibrary.org/b/id/9244876-L.jpg'],
-            ['Maigret tend un piège',            'Georges Simenon',        'Policier',       'https://covers.openlibrary.org/b/id/14006662-L.jpg'],
-            ['Le Meurtre de Roger Ackroyd',      'Agatha Christie',        'Policier',       'https://covers.openlibrary.org/b/id/8231960-L.jpg'],
-            ['Dix Petits Nègres',                'Agatha Christie',        'Policier',       'https://covers.openlibrary.org/b/id/11172296-L.jpg'],
-            ['La Métamorphose',                  'Franz Kafka',            'Roman',          'https://covers.openlibrary.org/b/id/8231955-L.jpg'],
-            ['Le Procès',                        'Franz Kafka',            'Roman',          'https://covers.openlibrary.org/b/id/14910748-L.jpg'],
-            ['Crime et Châtiment',               'Fyodor Dostoïevski',     'Roman',          'https://covers.openlibrary.org/b/id/8231950-L.jpg'],
-            ["L'Idiot",                          'Fyodor Dostoïevski',     'Roman',          'https://covers.openlibrary.org/b/id/11532473-L.jpg'],
-            ['Guerre et Paix',                   'Leo Tolstoï',            'Histoire',       'https://covers.openlibrary.org/b/id/8231945-L.jpg'],
-            ['Anna Karénine',                    'Leo Tolstoï',            'Roman',          'https://covers.openlibrary.org/b/id/12327215-L.jpg'],
+            ['Vingt mille lieues sous les mers', self::JULES_VERNE,            'Science-fiction','https://covers.openlibrary.org/b/id/8231965-L.jpg'],
+            ['Le Tour du monde en 80 jours',     self::JULES_VERNE,            'Roman',          'https://covers.openlibrary.org/b/id/6976035-L.jpg'],
+            ['Voyage au centre de la Terre',     self::JULES_VERNE,            'Science-fiction','https://covers.openlibrary.org/b/id/5890987-L.jpg'],
+            ['Le Chien jaune',                   self::GEORGES_SIMENON,        'Policier',       'https://covers.openlibrary.org/b/id/9244876-L.jpg'],
+            ['Maigret tend un piège',            self::GEORGES_SIMENON,        'Policier',       'https://covers.openlibrary.org/b/id/14006662-L.jpg'],
+            ['Le Meurtre de Roger Ackroyd',      self::AGATHA_CHRISTIE,        'Policier',       'https://covers.openlibrary.org/b/id/8231960-L.jpg'],
+            ['Dix Petits Nègres',                self::AGATHA_CHRISTIE,        'Policier',       'https://covers.openlibrary.org/b/id/11172296-L.jpg'],
+            ['La Métamorphose',                  self::FRANZ_KAFKA,            'Roman',          'https://covers.openlibrary.org/b/id/8231955-L.jpg'],
+            ['Le Procès',                        self::FRANZ_KAFKA,            'Roman',          'https://covers.openlibrary.org/b/id/14910748-L.jpg'],
+            [self::CRIME_ET_CHATIMENT,               self::FYODOR_DOSTOIEVSKI,     'Roman',          'https://covers.openlibrary.org/b/id/8231950-L.jpg'],
+            ["L'Idiot",                          self::FYODOR_DOSTOIEVSKI,     'Roman',          'https://covers.openlibrary.org/b/id/11532473-L.jpg'],
+            ['Guerre et Paix',                   self::LEO_TOLSTOI,            'Histoire',       'https://covers.openlibrary.org/b/id/8231945-L.jpg'],
+            ['Anna Karénine',                    self::LEO_TOLSTOI,            'Roman',          'https://covers.openlibrary.org/b/id/12327215-L.jpg'],
             ['Cent ans de solitude',             'Gabriel García Márquez', 'Roman',          'https://covers.openlibrary.org/b/id/8231940-L.jpg'],
-            ['1984',                             'George Orwell',          'Science-fiction','https://covers.openlibrary.org/b/id/8575708-L.jpg'],
-            ['La Ferme des animaux',             'George Orwell',          'Roman',          'https://covers.openlibrary.org/b/id/11261770-L.jpg'],
+            ['1984',                             self::GEORGE_ORWELL,          'Science-fiction','https://covers.openlibrary.org/b/id/8575708-L.jpg'],
+            ['La Ferme des animaux',             self::GEORGE_ORWELL,          'Roman',          'https://covers.openlibrary.org/b/id/11261770-L.jpg'],
             ['Le Vieil Homme et la Mer',         'Ernest Hemingway',       'Roman',          'https://covers.openlibrary.org/b/id/463307-L.jpg'],
             ['Mrs Dalloway',                     'Virginia Woolf',         'Roman',          'https://covers.openlibrary.org/b/id/6397580-L.jpg'],
         ];
@@ -90,7 +102,7 @@ class DatabaseSeeder extends Seeder
 
         $exemplaires = [];
         foreach ($livreIds as $titre => $uuid) {
-            $count = in_array($titre, ['Les Misérables','Germinal','1984','La Peste','Crime et Châtiment']) ? 3 : 2;
+            $count = in_array($titre, [self::LES_MISERABLES,'Germinal','1984',self::LA_PESTE,self::CRIME_ET_CHATIMENT]) ? 3 : 2;
             for ($i = 0; $i < $count; $i++) {
                 $exemplaires[$titre][] = DB::table('exemplaires')->insertGetId([
                     'livre_id' => $uuid, 'statut_id' => $disponible,
@@ -134,11 +146,11 @@ class DatabaseSeeder extends Seeder
         ]);
 
         foreach ([
-            [0, 'Les Misérables',              '2026-05-20', '2026-06-03'],
-            [1, 'La Peste',                    '2026-05-25', '2026-06-08'],
+            [0, self::LES_MISERABLES,              '2026-05-20', '2026-06-03'],
+            [1, self::LA_PESTE,                    '2026-05-25', '2026-06-08'],
             [2, '1984',                        '2026-06-01', '2026-06-15'],
             [3, 'Germinal',                    '2026-06-03', '2026-06-17'],
-            [4, 'Crime et Châtiment',          '2026-06-05', '2026-06-19'],
+            [4, self::CRIME_ET_CHATIMENT,          '2026-06-05', '2026-06-19'],
             [5, 'Le Meurtre de Roger Ackroyd', '2026-06-07', '2026-06-21'],
         ] as [$uIdx, $titre, $dateE, $dateR]) {
             $ex = array_shift($exemplaires[$titre]);
