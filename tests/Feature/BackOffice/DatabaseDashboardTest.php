@@ -16,6 +16,8 @@ class DatabaseDashboardTest extends TestCase
 {
     use RefreshDatabase, SeedsLibrary;
 
+    private const QUERY_URL = '/bo/database/query';
+
     public function test_le_dashboard_liste_les_tables(): void
     {
         $this->actingAs($this->bibliothecaire())
@@ -48,7 +50,7 @@ class DatabaseDashboardTest extends TestCase
         $this->usager(['email' => 'cible@example.com']);
 
         $this->actingAs($this->bibliothecaire())
-            ->post('/bo/database/query', ['sql' => 'SELECT email FROM users'])
+            ->post(self::QUERY_URL, ['sql' => 'SELECT email FROM users'])
             ->assertOk()
             ->assertViewHas('result', fn ($result) => collect($result)->pluck('email')->contains('cible@example.com'))
             ->assertViewHas('error', null);
@@ -59,7 +61,7 @@ class DatabaseDashboardTest extends TestCase
         $usager = $this->usager(['name' => 'Avant']);
 
         $this->actingAs($this->bibliothecaire())
-            ->post('/bo/database/query', [
+            ->post(self::QUERY_URL, [
                 'sql' => "UPDATE users SET name = 'Apres' WHERE id = {$usager->id}",
             ])
             ->assertOk()
@@ -72,7 +74,7 @@ class DatabaseDashboardTest extends TestCase
     public function test_une_requete_invalide_affiche_lerreur_sans_planter(): void
     {
         $this->actingAs($this->bibliothecaire())
-            ->post('/bo/database/query', ['sql' => 'SELECT * FROM nimporte_quoi'])
+            ->post(self::QUERY_URL, ['sql' => 'SELECT * FROM nimporte_quoi'])
             ->assertOk()
             ->assertViewHas('error', fn ($error) => is_string($error) && $error !== '');
     }
@@ -81,7 +83,7 @@ class DatabaseDashboardTest extends TestCase
     {
         $this->actingAs($this->usager())->get('/bo/database')->assertForbidden();
         $this->actingAs($this->usager())
-            ->post('/bo/database/query', ['sql' => 'SELECT 1'])
+            ->post(self::QUERY_URL, ['sql' => 'SELECT 1'])
             ->assertForbidden();
     }
 }
