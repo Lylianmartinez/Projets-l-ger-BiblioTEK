@@ -10,12 +10,14 @@ class ProfilBackOfficeTest extends TestCase
 {
     use RefreshDatabase, SeedsLibrary;
 
+    private const PROFILS_URL = '/bo/profils';
+
     public function test_la_liste_des_profils_est_accessible_au_bibliothecaire(): void
     {
         $this->usager(['name' => 'Usager Visible']);
 
         $this->actingAs($this->bibliothecaire())
-            ->get('/bo/profils')
+            ->get(self::PROFILS_URL)
             ->assertOk()
             ->assertSee('Usager Visible');
     }
@@ -32,11 +34,11 @@ class ProfilBackOfficeTest extends TestCase
 
     public function test_un_usager_ne_peut_pas_acceder_aux_profils_du_back_office(): void
     {
-        $this->actingAs($this->usager())->get('/bo/profils')->assertForbidden();
+        $this->actingAs($this->usager())->get(self::PROFILS_URL)->assertForbidden();
     }
 
     public function test_un_visiteur_est_redirige_vers_la_connexion(): void
     {
-        $this->get('/bo/profils')->assertRedirect(route('connexion'));
+        $this->get(self::PROFILS_URL)->assertRedirect(route('connexion'));
     }
 }

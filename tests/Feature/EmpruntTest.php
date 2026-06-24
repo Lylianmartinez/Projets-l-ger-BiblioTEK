@@ -18,6 +18,8 @@ class EmpruntTest extends TestCase
     private Statut $statutDispo;
     private Statut $statutEmprunte;
 
+    private const EMPRUNTER_URL = '/emprunter';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -39,14 +41,14 @@ class EmpruntTest extends TestCase
 
     public function test_la_page_emprunter_est_accessible_pour_un_usager(): void
     {
-        $this->actingAs($this->usager)->get('/emprunter')->assertStatus(200);
+        $this->actingAs($this->usager)->get(self::EMPRUNTER_URL)->assertStatus(200);
     }
 
     public function test_un_usager_peut_emprunter_des_exemplaires(): void
     {
         $exemplaire = $this->creerExemplaire();
 
-        $response = $this->actingAs($this->usager)->post('/emprunter', [
+        $response = $this->actingAs($this->usager)->post(self::EMPRUNTER_URL, [
             'exemplaires' => [$exemplaire->id],
         ]);
 
@@ -59,7 +61,7 @@ class EmpruntTest extends TestCase
     {
         $exemplaire = $this->creerExemplaire();
 
-        $this->actingAs($this->usager)->post('/emprunter', [
+        $this->actingAs($this->usager)->post(self::EMPRUNTER_URL, [
             'exemplaires' => [$exemplaire->id],
         ]);
 
@@ -76,12 +78,12 @@ class EmpruntTest extends TestCase
         $exemplaire2 = $this->creerExemplaire();
 
         // Premier emprunt
-        $this->actingAs($this->usager)->post('/emprunter', [
+        $this->actingAs($this->usager)->post(self::EMPRUNTER_URL, [
             'exemplaires' => [$exemplaire1->id],
         ]);
 
         // Tentative de second emprunt
-        $response = $this->actingAs($this->usager)->post('/emprunter', [
+        $response = $this->actingAs($this->usager)->post(self::EMPRUNTER_URL, [
             'exemplaires' => [$exemplaire2->id],
         ]);
 
@@ -94,7 +96,7 @@ class EmpruntTest extends TestCase
         $exemplaire = $this->creerExemplaire();
         $exemplaire->update(['statut_id' => $this->statutEmprunte->id]);
 
-        $this->actingAs($this->usager)->post('/emprunter', [
+        $this->actingAs($this->usager)->post(self::EMPRUNTER_URL, [
             'exemplaires' => [$exemplaire->id],
         ])->assertSessionHasErrors('emprunt');
     }
@@ -103,7 +105,7 @@ class EmpruntTest extends TestCase
     {
         $exemplaire = $this->creerExemplaire();
 
-        $this->actingAs($this->usager)->post('/emprunter', [
+        $this->actingAs($this->usager)->post(self::EMPRUNTER_URL, [
             'exemplaires' => [$exemplaire->id],
         ]);
 
@@ -113,7 +115,7 @@ class EmpruntTest extends TestCase
     public function test_le_detail_emprunt_est_accessible_par_son_proprietaire(): void
     {
         $exemplaire = $this->creerExemplaire();
-        $this->actingAs($this->usager)->post('/emprunter', ['exemplaires' => [$exemplaire->id]]);
+        $this->actingAs($this->usager)->post(self::EMPRUNTER_URL, ['exemplaires' => [$exemplaire->id]]);
         $emprunt = $this->usager->emprunts()->first();
 
         $this->actingAs($this->usager)
@@ -124,7 +126,7 @@ class EmpruntTest extends TestCase
     public function test_un_autre_usager_ne_peut_pas_voir_un_emprunt_qui_ne_lui_appartient_pas(): void
     {
         $exemplaire = $this->creerExemplaire();
-        $this->actingAs($this->usager)->post('/emprunter', ['exemplaires' => [$exemplaire->id]]);
+        $this->actingAs($this->usager)->post(self::EMPRUNTER_URL, ['exemplaires' => [$exemplaire->id]]);
         $emprunt = $this->usager->emprunts()->first();
 
         $autreUsager = User::factory()->create(['role' => 'usager']);
