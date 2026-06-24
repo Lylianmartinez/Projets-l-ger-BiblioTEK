@@ -32,7 +32,7 @@ class EmpruntSeeder extends Seeder
             ]);
 
             // Attacher 1 à 5 exemplaires
-            $nbExemplaires = rand(1, 5);
+            $nbExemplaires = random_int(1, 5);
             $choisis = $exemplaires->random(min($nbExemplaires, $exemplaires->count()));
             $emprunt->exemplaires()->attach($choisis->pluck('id')->toArray());
 

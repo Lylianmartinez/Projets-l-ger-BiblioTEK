@@ -61,7 +61,8 @@
             <form action="{{ route('bo.database.query') }}" method="POST">
                 @csrf
                 <div class="field" style="margin-bottom:.8rem">
-                    <textarea name="sql" placeholder="SELECT * FROM livres LIMIT 20;">{{ $sql ?? '' }}</textarea>
+                    <label class="sr-only" for="sql-query">Requête SQL</label>
+                    <textarea id="sql-query" name="sql" placeholder="SELECT * FROM livres LIMIT 20;">{{ $sql ?? '' }}</textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Exécuter</button>
                 <span class="text-beige text-xs italic" style="margin-left:.8rem">
