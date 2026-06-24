@@ -10,8 +10,8 @@
 <div class="card mb-2">
     <form action="{{ route('bo.usagers.index') }}" method="GET" style="display:flex;gap:.75rem;align-items:flex-end">
         <div class="field" style="margin:0;flex:1">
-            <label>Rechercher par nom ou email</label>
-            <input type="text" name="q" value="{{ $search }}" placeholder="Nom ou email…">
+            <label for="usagers-search">Rechercher par nom ou email</label>
+            <input type="text" id="usagers-search" name="q" value="{{ $search }}" placeholder="Nom ou email…">
         </div>
         <button type="submit" class="btn btn-primary">Rechercher</button>
         @if($search)
