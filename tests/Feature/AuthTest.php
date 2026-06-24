@@ -10,31 +10,37 @@ class AuthTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const INSCRIPTION_URL = '/inscription';
+
+    private const CONNEXION_URL = '/connexion';
+
+    private const EMAIL = 'jean@test.fr';
+
     public function test_inscription_affiche_le_formulaire(): void
     {
-        $this->get('/inscription')->assertStatus(200)->assertSee('Inscription');
+        $this->get(self::INSCRIPTION_URL)->assertStatus(200)->assertSee('Inscription');
     }
 
     public function test_un_usager_peut_sinscrire(): void
     {
-        $response = $this->post('/inscription', [
+        $response = $this->post(self::INSCRIPTION_URL, [
             'name'                  => 'Jean Dupont',
-            'email'                 => 'jean@test.fr',
+            'email'                 => self::EMAIL,
             'password'              => 'password123',
             'password_confirmation' => 'password123',
         ]);
 
         $response->assertRedirect(route('profil'));
-        $this->assertDatabaseHas('users', ['email' => 'jean@test.fr', 'role' => 'usager']);
+        $this->assertDatabaseHas('users', ['email' => self::EMAIL, 'role' => 'usager']);
     }
 
     public function test_inscription_echoue_avec_email_deja_utilise(): void
     {
-        User::factory()->create(['email' => 'jean@test.fr']);
+        User::factory()->create(['email' => self::EMAIL]);
 
-        $this->post('/inscription', [
+        $this->post(self::INSCRIPTION_URL, [
             'name'                  => 'Jean Dupont',
-            'email'                 => 'jean@test.fr',
+            'email'                 => self::EMAIL,
             'password'              => 'password123',
             'password_confirmation' => 'password123',
         ])->assertSessionHasErrors('email');
@@ -42,14 +48,14 @@ class AuthTest extends TestCase
 
     public function test_connexion_affiche_le_formulaire(): void
     {
-        $this->get('/connexion')->assertStatus(200)->assertSee('Connexion');
+        $this->get(self::CONNEXION_URL)->assertStatus(200)->assertSee('Connexion');
     }
 
     public function test_un_usager_peut_se_connecter(): void
     {
         $user = User::factory()->create(['password' => bcrypt('password123')]);
 
-        $this->post('/connexion', [
+        $this->post(self::CONNEXION_URL, [
             'email'    => $user->email,
             'password' => 'password123',
         ])->assertRedirect(route('profil'));
@@ -61,7 +67,7 @@ class AuthTest extends TestCase
     {
         $biblio = User::factory()->bibliothecaire()->create(['password' => bcrypt('password123')]);
 
-        $this->post('/connexion', [
+        $this->post(self::CONNEXION_URL, [
             'email'    => $biblio->email,
             'password' => 'password123',
         ])->assertRedirect(route('bo.profils'));
@@ -71,7 +77,7 @@ class AuthTest extends TestCase
     {
         $user = User::factory()->create(['password' => bcrypt('password123')]);
 
-        $this->post('/connexion', [
+        $this->post(self::CONNEXION_URL, [
             'email'    => $user->email,
             'password' => 'mauvais',
         ])->assertSessionHasErrors('email');
