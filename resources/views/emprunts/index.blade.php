@@ -12,8 +12,10 @@
 <div class="card mb-2">
     <form action="{{ route('emprunter') }}" method="GET">
         <div style="display:flex;gap:0.75rem;align-items:center">
+            <label class="sr-only" for="emprunter-search">Rechercher par titre ou auteur</label>
             <input
                 type="text"
+                id="emprunter-search"
                 name="q"
                 value="{{ request('q') }}"
                 placeholder="Rechercher par titre ou auteur..."

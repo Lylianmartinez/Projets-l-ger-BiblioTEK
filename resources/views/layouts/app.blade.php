@@ -311,7 +311,8 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" stroke-linecap="round"/>
             </svg>
-            <input type="text" name="titre" value="{{ request('titre') }}" placeholder="Titre, auteur…">
+            <label class="sr-only" for="header-search">Rechercher dans le catalogue</label>
+            <input type="text" id="header-search" name="titre" value="{{ request('titre') }}" placeholder="Titre, auteur…">
         </form>
 
         {{-- Nav --}}
