@@ -11,11 +11,15 @@ class InscriptionValidationTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const INSCRIPTION_URL = '/inscription';
+
+    private const EMAIL = 'alice@example.com';
+
     private function donnees(array $override = []): array
     {
         return array_merge([
             'name'                  => 'Alice Martin',
-            'email'                 => 'alice@example.com',
+            'email'                 => self::EMAIL,
             'password'              => 'password123',
             'password_confirmation' => 'password123',
         ], $override);
@@ -23,10 +27,10 @@ class InscriptionValidationTest extends TestCase
 
     public function test_inscription_valide_cree_un_usager_actif_et_connecte(): void
     {
-        $this->post('/inscription', $this->donnees())
+        $this->post(self::INSCRIPTION_URL, $this->donnees())
             ->assertRedirect(route('profil'));
 
-        $user = User::where('email', 'alice@example.com')->first();
+        $user = User::where('email', self::EMAIL)->first();
         $this->assertNotNull($user);
         $this->assertSame('usager', $user->role);
         $this->assertTrue((bool) $user->is_active);
@@ -36,27 +40,27 @@ class InscriptionValidationTest extends TestCase
 
     public function test_le_nom_est_obligatoire(): void
     {
-        $this->post('/inscription', $this->donnees(['name' => '']))
+        $this->post(self::INSCRIPTION_URL, $this->donnees(['name' => '']))
             ->assertSessionHasErrors('name');
     }
 
     public function test_email_invalide_est_rejete(): void
     {
-        $this->post('/inscription', $this->donnees(['email' => 'pas-un-email']))
+        $this->post(self::INSCRIPTION_URL, $this->donnees(['email' => 'pas-un-email']))
             ->assertSessionHasErrors('email');
     }
 
     public function test_email_doit_etre_unique(): void
     {
-        User::factory()->create(['email' => 'alice@example.com']);
+        User::factory()->create(['email' => self::EMAIL]);
 
-        $this->post('/inscription', $this->donnees())
+        $this->post(self::INSCRIPTION_URL, $this->donnees())
             ->assertSessionHasErrors('email');
     }
 
     public function test_mot_de_passe_trop_court_est_rejete(): void
     {
-        $this->post('/inscription', $this->donnees([
+        $this->post(self::INSCRIPTION_URL, $this->donnees([
             'password'              => 'court',
             'password_confirmation' => 'court',
         ]))->assertSessionHasErrors('password');
@@ -64,7 +68,7 @@ class InscriptionValidationTest extends TestCase
 
     public function test_confirmation_de_mot_de_passe_doit_correspondre(): void
     {
-        $this->post('/inscription', $this->donnees([
+        $this->post(self::INSCRIPTION_URL, $this->donnees([
             'password_confirmation' => 'different123',
         ]))->assertSessionHasErrors('password');
 
