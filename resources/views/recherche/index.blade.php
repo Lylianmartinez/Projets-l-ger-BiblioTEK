@@ -111,14 +111,14 @@
     width: 14px; height: 14px; accent-color: var(--gold);
     cursor: pointer; flex-shrink: 0;
 }
-.filter-option label {
+.filter-option span {
     font-family: 'IM Fell English', serif;
     font-size: 0.88rem; color: var(--beige);
     text-transform: none; letter-spacing: 0;
     cursor: pointer; margin: 0;
     transition: color .15s;
 }
-.filter-option:hover label { color: var(--gold-light); }
+.filter-option:hover span { color: var(--gold-light); }
 
 /* Tags étiquettes */
 .tag-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
@@ -330,7 +330,8 @@
                     Recherche
                 </div>
                 <div class="field" style="margin:0">
-                    <input type="text" name="titre" value="{{ request('titre') }}" placeholder="Titre du livre…">
+                    <label class="sr-only" for="filtre-titre">Titre du livre</label>
+                    <input type="text" id="filtre-titre" name="titre" value="{{ request('titre') }}" placeholder="Titre du livre…">
                 </div>
             </div>
 
@@ -341,7 +342,8 @@
                     Auteur
                 </div>
                 <div class="field" style="margin:0">
-                    <select name="auteur_id">
+                    <label class="sr-only" for="filtre-auteur">Auteur</label>
+                    <select id="filtre-auteur" name="auteur_id">
                         <option value="">— Tous les auteurs —</option>
                         @foreach($auteurs as $auteur)
                             <option value="{{ $auteur->id }}" @selected(request('auteur_id') == $auteur->id)>
@@ -377,7 +379,7 @@
                 <label class="filter-option">
                     <input type="checkbox" name="disponible" value="1" @checked(request('disponible'))
                            onchange="document.getElementById('filter-form').submit()">
-                    <label>Disponibles uniquement</label>
+                    <span>Disponibles uniquement</span>
                 </label>
             </div>
 
@@ -426,7 +428,7 @@
                                 src="{{ $livre->cover_url }}"
                                 alt="Couverture de {{ $livre->titre }}"
                                 loading="lazy"
-                                onerror="this.style.display='none';this.nextElementSibling.style.display='block'"
+                                class="book-cover-img"
                             >
                             <span class="book-cover-letter" style="display:none">{{ $letter }}</span>
                         @else
@@ -471,4 +473,20 @@
     </section>
 
 </div>
+@push('scripts')
+<script>
+    // Repli de couverture : si l'image échoue, on la masque et on affiche
+    // l'initiale. Listener délégué en phase de capture (« error » ne remonte
+    // pas), pour éviter un gestionnaire inline sur un <img> non interactif.
+    document.addEventListener('error', function (e) {
+        var img = e.target;
+        if (img.tagName === 'IMG' && img.classList.contains('book-cover-img')) {
+            img.style.display = 'none';
+            if (img.nextElementSibling) {
+                img.nextElementSibling.style.display = 'block';
+            }
+        }
+    }, true);
+</script>
+@endpush
 @endsection
