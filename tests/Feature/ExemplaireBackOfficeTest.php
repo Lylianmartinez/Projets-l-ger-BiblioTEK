@@ -17,6 +17,10 @@ class ExemplaireBackOfficeTest extends TestCase
     private Statut $statut;
     private Livre $livre;
 
+    private const AJOUT_URL = '/bo/exemplaire/ajout';
+
+    private const MISE_EN_SERVICE = '2023-01-01';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -33,12 +37,12 @@ class ExemplaireBackOfficeTest extends TestCase
 
     public function test_formulaire_creation_accessible(): void
     {
-        $this->actingAs($this->biblio)->get('/bo/exemplaire/ajout')->assertStatus(200);
+        $this->actingAs($this->biblio)->get(self::AJOUT_URL)->assertStatus(200);
     }
 
     public function test_un_bibliothecaire_peut_creer_un_exemplaire(): void
     {
-        $this->actingAs($this->biblio)->post('/bo/exemplaire/ajout', [
+        $this->actingAs($this->biblio)->post(self::AJOUT_URL, [
             'livre_id'        => $this->livre->id,
             'statut_id'       => $this->statut->id,
             'mise_en_service' => '2024-01-15',
@@ -52,7 +56,7 @@ class ExemplaireBackOfficeTest extends TestCase
 
     public function test_creation_echoue_sans_livre(): void
     {
-        $this->actingAs($this->biblio)->post('/bo/exemplaire/ajout', [
+        $this->actingAs($this->biblio)->post(self::AJOUT_URL, [
             'statut_id'       => $this->statut->id,
             'mise_en_service' => '2024-01-15',
         ])->assertSessionHasErrors('livre_id');
@@ -64,13 +68,13 @@ class ExemplaireBackOfficeTest extends TestCase
         $exemplaire = Exemplaire::factory()->create([
             'livre_id'        => $this->livre->id,
             'statut_id'       => $this->statut->id,
-            'mise_en_service' => '2023-01-01',
+            'mise_en_service' => self::MISE_EN_SERVICE,
         ]);
 
         $this->actingAs($this->biblio)->put("/bo/exemplaire/modification/{$exemplaire->id}", [
             'livre_id'        => $this->livre->id,
             'statut_id'       => $nouveauStatut->id,
-            'mise_en_service' => '2023-01-01',
+            'mise_en_service' => self::MISE_EN_SERVICE,
         ])->assertRedirect(route('bo.exemplaires'));
 
         $this->assertEquals($nouveauStatut->id, $exemplaire->fresh()->statut_id);
@@ -81,7 +85,7 @@ class ExemplaireBackOfficeTest extends TestCase
         $exemplaire = Exemplaire::factory()->create([
             'livre_id'        => $this->livre->id,
             'statut_id'       => $this->statut->id,
-            'mise_en_service' => '2023-01-01',
+            'mise_en_service' => self::MISE_EN_SERVICE,
         ]);
 
         $this->actingAs($this->biblio)
@@ -96,6 +100,6 @@ class ExemplaireBackOfficeTest extends TestCase
         $usager = User::factory()->create(['role' => 'usager']);
 
         $this->actingAs($usager)->get('/bo/exemplaires')->assertStatus(403);
-        $this->actingAs($usager)->get('/bo/exemplaire/ajout')->assertStatus(403);
+        $this->actingAs($usager)->get(self::AJOUT_URL)->assertStatus(403);
     }
 }
