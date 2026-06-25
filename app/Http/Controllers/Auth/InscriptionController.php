@@ -22,6 +22,9 @@ class InscriptionController extends Controller
             'email'    => $request->email,
             'password' => Hash::make($request->password),
             'role'     => 'usager',
+            // L'inscription connecte immediatement l'usager : on date donc cette
+            // premiere connexion (un compte jamais utilise restera a "Jamais").
+            'derniere_connexion' => now(),
         ]);
 
         Auth::login($user);
