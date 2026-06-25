@@ -36,6 +36,8 @@ class ConnexionController extends Controller
             return $this->echecConnexion('Votre compte a été suspendu. Contactez la bibliothèque.');
         }
 
+        $user->update(['derniere_connexion' => now()]);
+
         return $user->estBibliothecaire()
             ? redirect()->route('bo.profils')
             : redirect()->intended(route('profil'));
