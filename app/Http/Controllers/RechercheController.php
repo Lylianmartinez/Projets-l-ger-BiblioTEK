@@ -32,7 +32,10 @@ class RechercheController extends Controller
             $query->whereHas('exemplaires', fn ($q) => $q->whereHas('statut', fn ($s) => $s->where('statut', 'disponible')));
         }
 
-        $livres = $query->orderBy('titre')->paginate(20)->withQueryString();
+        // Tri sur le titre : 'desc' (Z->A) accepte explicitement, sinon 'asc' (A->Z) par defaut.
+        $sens = $request->input('tri') === 'desc' ? 'desc' : 'asc';
+
+        $livres = $query->orderBy('titre', $sens)->paginate(20)->withQueryString();
 
         return view('recherche.index', compact('livres', 'auteurs', 'categories'));
     }

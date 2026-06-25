@@ -400,9 +400,18 @@
                     ouvrage{{ $livres->total() > 1 ? 's' : '' }} trouvé{{ $livres->total() > 1 ? 's' : '' }}
                 @endif
             </span>
-            @if(request()->hasAny(['titre','auteur_id','categorie_id','disponible']))
-                <a href="{{ route('recherche') }}" class="btn btn-secondary text-xs">Réinitialiser les filtres</a>
-            @endif
+            <div style="display:flex;align-items:center;gap:0.75rem">
+                <label for="tri-titre" class="books-count" style="margin:0">Trier&nbsp;:</label>
+                <select id="tri-titre" onchange="location = this.value" style="width:auto">
+                    <option value="{{ route('recherche', array_merge(request()->query(), ['tri' => 'asc'])) }}"
+                        @selected(request('tri') !== 'desc')>Titre A → Z</option>
+                    <option value="{{ route('recherche', array_merge(request()->query(), ['tri' => 'desc'])) }}"
+                        @selected(request('tri') === 'desc')>Titre Z → A</option>
+                </select>
+                @if(request()->hasAny(['titre','auteur_id','categorie_id','disponible']))
+                    <a href="{{ route('recherche') }}" class="btn btn-secondary text-xs">Réinitialiser les filtres</a>
+                @endif
+            </div>
         </div>
 
         @if($livres->isEmpty())
